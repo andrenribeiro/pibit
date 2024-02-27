@@ -1,0 +1,83 @@
+/Declaração de Variáveis/
+
+int j,k,i,q, contador_loop;                                              
+float ComprimentoLinha[3],resistencia[3];
+int tipo_faltaAG[10],tipo_faltaBG[10], tipo_faltaCG[10], tipo_faltaAB[10],
+tipo_faltaAC[10], tipo_faltaBC[10], tipo_faltaABC[10], tipo_faltaABG[10], tipo_faltaACG[10],
+tipo_faltaBCG[10];
+
+/*****************/
+/Inicializando os parâmetros/
+
+ComprimentoLinha[0] = 40.0;	
+ComprimentoLinha[1]	= 50.0;                                                                            							
+ComprimentoLinha[2] = 70.0;
+ComprimentoLinha[3] = 80.0;
+
+resistencia[0] = 0.1;
+resistencia[1] = 1.0;
+resistencia[2] = 5.0;
+
+for (q=0;q<10;q++) 
+{
+tipo_faltaAG[q] = 0;
+tipo_faltaBG[q] = 0;
+tipo_faltaCG[q] = 0;
+tipo_faltaAB[q] = 0;
+tipo_faltaAC[q] = 0;
+tipo_faltaBC[q] = 0;
+tipo_faltaABC[q] = 0;
+tipo_faltaABG[q] = 0;
+tipo_faltaACG[q] = 0;
+tipo_faltaBCG[q] = 0;
+}
+
+tipo_faltaAG[0] = 1;
+tipo_faltaBG[1] = 2;
+tipo_faltaCG[2] = 4;
+tipo_faltaAB[3] = 1;
+tipo_faltaAC[4] = 2;
+tipo_faltaBC[5] = 4;
+tipo_faltaABC[6] = 1;
+tipo_faltaABG[7] = 2;
+tipo_faltaACG[8] = 4;
+tipo_faltaBCG[9] = 8;
+
+for (j=0;j<4;j++)                                                                                      									     
+{
+/Definindo a variável ComprimentoLinha (chamada de preprocessor variable, variável pré processada)/
+SetSlider "DraftVariables : Length" = ComprimentoLinha[j];  	                                                   			
+
+	for (k=0;k<10;k++)
+	{
+	/Definindo o tipo de falta/
+	SetSwitch "Subsystem #1 : CTLs : Inputs : AG" = tipo_faltaAG[k];
+	SetSwitch "Subsystem #1 : CTLs : Inputs : BG" = tipo_faltaBG[k];
+	SetSwitch "Subsystem #1 : CTLs : Inputs : CG" = tipo_faltaCG[k];
+    SetSwitch "Subsystem #1 : CTLs : Inputs : AB" = tipo_faltaAB[k];
+    SetSwitch "Subsystem #1 : CTLs : Inputs : AC" = tipo_faltaAC[k];
+	SetSwitch "Subsystem #1 : CTLs : Inputs : BC" = tipo_faltaBC[k];
+	SetSwitch "Subsystem #1 : CTLs : Inputs : ABC" = tipo_faltaABC[k];
+    SetSwitch "Subsystem #1 : CTLs : Inputs : ABG" = tipo_faltaABG[k];
+    SetSwitch "Subsystem #1 : CTLs : Inputs : ACG" = tipo_faltaACG[k];
+	SetSwitch "Subsystem #1 : CTLs : Inputs : BCG" = tipo_faltaBCG[k];
+
+
+		for (i=0;i<3;i++)
+		{
+		contador_loop++;								                               	
+		/Definindo a resistência de falta/
+		SetSlider "DraftVariables : Ron" = res[i];
+		fprintf(stdmsg,"Executanto simulação de número %d\n",contador_loop);                            
+		Start;
+        UpdatePlots;
+		SUSPEND 2.694;
+		PushButton "Subsystem #1 : CTLs : Inputs : Fault";
+		SUSPEND 0.261;
+		ReleaseButton "Subsystem #1 : CTLs : Inputs : Fault";
+        SavePlotToCSV "Fault Bus","Fault Bus"::itoa(contador_loop)::".csv";
+                                                                                                       
+        Stop;
+		}
+	}
+}
